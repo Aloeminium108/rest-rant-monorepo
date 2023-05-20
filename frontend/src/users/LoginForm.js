@@ -18,7 +18,7 @@ function LoginForm() {
     async function handleSubmit(e) {
         e.preventDefault()
        
-        const response = await fetch('http://localhost:authentication/', {
+        const response = await fetch('http://localhost:5000/authentication/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -28,8 +28,12 @@ function LoginForm() {
 
         const data = await response.json()
 
-        console.log(data)
-
+        if (response.status === 200) {
+            setCurrentUser(data.user)
+            history.push('/')
+        } else {
+            setErrorMessage(data.message)
+        }
     }
 
     return (
