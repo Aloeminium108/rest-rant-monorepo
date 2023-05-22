@@ -23,7 +23,6 @@ router.post('/', async (req, res) => {
 
 router.get('/profile', async (req, res) => {
   try {
-    console.log(req.session.userId)
     let user = await User.findOne({
       where: {
         userId: req.session.userId
