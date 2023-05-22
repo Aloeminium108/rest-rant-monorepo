@@ -15,9 +15,24 @@ router.post('/', async (req, res) => {
       message: "Incorrect email or password"
     }) 
   } else {
+    req.session.userId = user.userId
     res.status(200).json({ user })
   }
 
+})
+
+router.get('/profile', async (req, res) => {
+  try {
+    console.log(req.session.userId)
+    let user = await User.findOne({
+      where: {
+        userId: req.session.userId
+      }
+    })
+    res.json(user)
+  } catch {
+    res.json(null)
+  }
 })
 
 module.exports = router
