@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
       message: "Incorrect email or password"
     }) 
   } else {
-    const token = jwt.sign({ user }, process.env.ACCESS_SECRET, { expiresIn: 900 })
+    const token = jwt.sign({ user }, process.env.ACCESS_SECRET, { expiresIn: parseInt(process.env.ACCESS_LIFETIME) })
     res.status(200).json({ user, token })
   }
 
