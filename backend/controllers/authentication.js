@@ -1,7 +1,8 @@
 const router = require('express').Router()
 const db = require("../models")
 const bcrypt = require('bcrypt')
-const jwt = require('json-web-token')
+const checkToken = require('../middleware/tokenChecker')
+const jwt = require('jsonwebtoken')
 
 const { User } = db
 
@@ -16,30 +17,22 @@ router.post('/', async (req, res) => {
       message: "Incorrect email or password"
     }) 
   } else {
-    const result = await jwt.encode(process.env.JWT_SECRET, { id: user.userId })
-    res.status(200).json({ user: user, token: result.value })
+    const token = jwt.sign({ user }, process.env.ACCESS_SECRET, { expiresIn: 900 })
+    res.status(200).json({ user, token })
   }
 
 })
 
-router.get('/profile', async (req, res) => {
+router.get('/profile', checkToken, async (req, res) => {
   try {
 
-    const [authenticationMethod, token] = req.headers.authorization.split(' ')
+    let user = await User.findOne({
+      where: {
+        userId: req.decoded.user.userId
+      }
+    })
 
-    if (authenticationMethod === 'Bearer') {
-      
-      const result = await jwt.decode(process.env.JWT_SECRET, token)
-      const { id } = result.value
-
-      let user = await User.findOne({
-        where: {
-          userId: id
-        }
-      })
-
-      res.json(user)
-    }
+    res.json(user)
 
   } catch {
     res.json(null)

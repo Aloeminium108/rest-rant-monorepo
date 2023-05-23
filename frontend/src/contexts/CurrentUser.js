@@ -11,11 +11,13 @@ function CurrentUserProvider({ children }){
         const getLoggedInUser = async () => {
             let response = await fetch('http://localhost:5000/authentication/profile', {
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `${localStorage.getItem('token')}`
                 }
             })
             let user = await response.json()
-            setCurrentUser(user)
+
+            if (!user.error) 
+                setCurrentUser(user)
         }
         getLoggedInUser()
     }, [])
