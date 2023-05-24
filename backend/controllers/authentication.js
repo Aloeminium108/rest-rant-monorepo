@@ -18,7 +18,8 @@ router.post('/', async (req, res) => {
     }) 
   } else {
     const token = jwt.sign({ user }, process.env.ACCESS_SECRET, { expiresIn: parseInt(process.env.ACCESS_LIFETIME) })
-    res.status(200).json({ user, token })
+    const refreshToken = jwt.sign({ user }, process.env.REFRESH_SECRET, { expiresIn: parseInt(process.env.REFRESH_LIFETIME) })
+    res.status(200).json({ user, token, refreshToken })
   }
 
 })
